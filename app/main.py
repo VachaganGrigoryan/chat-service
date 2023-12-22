@@ -43,7 +43,10 @@ def get_users(db: Session=Depends(get_db)):
 @app.get("/chat")
 def get_chat(db: Session=Depends(get_db)):
 
-    chat = crud.get_chat(db)
+    # chat = crud.get_chat(db)
+    query = text("SELECT * FROM chat")
+    result = db.execute(query)
+    chat = result.fetchone()
     
     if not chat:
         raise HTTPException(status_code=404, detail="No chat found")

@@ -6,28 +6,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 from .database import Base, engine
 
-
-# chat_user_association = Table(
-#     'chat_user_association',
-#     Base.metadata,
-#     Column('chat_id', UUID(as_uuid=True), ForeignKey('chat.guid')),
-#     Column('user_id', UUID(as_uuid=True), ForeignKey('account_user.guid'))
-# )
-
-# chat_user_association = Table(
-#     'chat_user_association',
-#     Base.metadata,
-#     Column('chat_id', UUID(as_uuid=True), ForeignKey('chat.guid')),
-#     Column('user_id', UUID(as_uuid=True), ForeignKey('account_user.guid'))
-# )
-
-
-
-# user_game_association = Table('user_game_association', Base.metadata,
-#     Column('user_id', UUID(as_uuid=True), ForeignKey('account_user.guid')),
-#     Column('game_id', UUID(as_uuid=True), ForeignKey('games.guid'))
-# )
-
 class ChatMembers(Base):
     __tablename__ = 'chat_members'
 
@@ -71,26 +49,6 @@ class User(Base):
     chat = Column(UUID(as_uuid=True), ForeignKey('chat.guid'), index=True, unique=True, nullable=False)
 
 
-
-
-# class Game(Base):
-#     __tablename__ = 'games'
-
-#     guid = Column(UUID(as_uuid=True), default=uuid4, primary_key=True, unique=True, nullable=False)
-#     title = Column(String(255), nullable=False)
-#     description = Column(Text, nullable=False)
-#     image = Column(String, nullable=True)
-#     configs = Column(JSON, nullable=True)
-#     is_active = Column(Boolean, default=True)
-#     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-#     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)
-#     users = relationship('User', secondary=user_game_association, back_populates='games')
-#     chat = relationship('Chat', secondary=chat_user_association, back_populates='games',
-#                     primaryjoin="Game.guid == chat_user_association.c.game_id",
-#                     secondaryjoin="Chat.guid == chat_user_association.c.chat_id")
-
-
-
 class Game(Base):
     __tablename__ = 'games'
 
@@ -106,7 +64,3 @@ class Game(Base):
     users = Column(UUID(as_uuid=True), ForeignKey('account_user.guid'), index=True, unique=True, nullable=False)
 
     chat = Column(UUID(as_uuid=True), ForeignKey('chat.guid'), index=True, unique=True, nullable=False)
-
-
-
-Base.metadata.create_all(bind=engine)
