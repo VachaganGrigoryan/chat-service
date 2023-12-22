@@ -1,38 +1,52 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends
-from fastapi.params import Body
-from pydantic import BaseModel
-from typing import Optional, List
-from random import randrange
-import psycopg2
-from psycopg2.extras import RealDictCursor
-import time
-from database import engine, get_db, SessionLocal
+from fastapi import Depends, FastAPI, HTTPException
+from sqlalchemy.orm import Session
+from sqlalchemy import text
 
-
-
-# models.Base.metadata.create_all(bind=engine)
-
-class Post(BaseModel):
-    id: int
-    title: str
-    content: str
-    published: bool = True
+from uuid import UUID
+from db.database import SessionLocal, engine, get_db
+from db import crud
 
 
 app = FastAPI()
 
-
-while True:
+# Dependency
+def get_db():
+    db = SessionLocal()
     try:
-        conn = psycopg2.connect(host='localhost',
-                                database='postgres',
-                                user='postgres',
-                                password='postgres',
-                                cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print("DB connection was succesful")
-        break
-    except Exception as error:
-        print("COnnecting fail!")
-        print("ERROR Was", error)
-        time.sleep(2)
+        yield db
+    finally:
+        db.close()
+
+@app.get("/")
+def home():
+    return {"message": "Hello World"}
+
+
+@app.get("/users")
+def get_users(db: Session=Depends(get_db)):
+
+    users = crud.get_users(db)
+
+    if not users:
+        raise HTTPException(status_code=404, detail="No users found")
+    return users
+
+@app.get("/games")
+def get_users(db: Session=Depends(get_db)):
+
+    games = crud.get_games(db)
+    
+    if not games:
+        raise HTTPException(status_code=404, detail="No games found")
+    return games
+
+@app.get("/chat")
+def get_chat(db: Session=Depends(get_db)):
+
+    chat = crud.get_chat(db)
+    
+    if not chat:
+        raise HTTPException(status_code=404, detail="No chat found")
+    return chat
+
+# models -> account_user, CHAT app models, games
