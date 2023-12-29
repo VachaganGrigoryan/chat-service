@@ -2,10 +2,8 @@ from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from uuid import UUID
-from db.database import SessionLocal, engine, get_db
-from db import crud
-
+from app.db import crud
+from app.db.database import SessionLocal
 
 app = FastAPI()
 
@@ -24,7 +22,6 @@ def home():
 
 @app.get("/users")
 def get_users(db: Session=Depends(get_db)):
-
     users = crud.get_users(db)
 
     if not users:
@@ -33,7 +30,7 @@ def get_users(db: Session=Depends(get_db)):
 
 @app.get("/games")
 def get_users(db: Session=Depends(get_db)):
-
+    print(crud)
     games = crud.get_games(db)
     
     if not games:
