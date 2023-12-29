@@ -7,6 +7,7 @@ from app.db.database import SessionLocal
 
 app = FastAPI()
 
+
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -14,6 +15,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 @app.get("/")
 def home():
@@ -28,14 +30,15 @@ def get_users(db: Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="No users found")
     return users
 
+
 @app.get("/games")
 def get_users(db: Session=Depends(get_db)):
-    print(crud)
     games = crud.get_games(db)
     
     if not games:
         raise HTTPException(status_code=404, detail="No games found")
     return games
+
 
 @app.get("/chat")
 def get_chat(db: Session=Depends(get_db)):
